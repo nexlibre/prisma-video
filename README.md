@@ -1,5 +1,14 @@
 # Prisma Video · 1.0.1 beta
 
+## Descargar para Android
+
+[**⬇ Descargar APK · Prisma Video 1.0.1 beta**](https://github.com/nexlibre/prisma-video/releases/download/v1.0.1-beta/Prisma-Video-1.0.1-beta.apk)
+
+[Ver la versión y sus archivos](https://github.com/nexlibre/prisma-video/releases/tag/v1.0.1-beta)
+
+Toca **Descargar APK** desde tu teléfono y abre el archivo descargado para instalarlo. Requiere Android 8 o posterior. En la página de la versión también aparece dentro de **Assets / Recursos**, con el nombre `Prisma-Video-1.0.1-beta.apk`.
+
+
 Reproductor local para Android 8.0 o posterior. Interfaz minimalista en español, sin conexión a Internet, anuncios ni cuentas.
 
 ## Incluido
