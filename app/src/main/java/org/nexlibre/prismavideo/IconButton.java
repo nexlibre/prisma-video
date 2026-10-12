@@ -32,6 +32,13 @@ public final class IconButton extends View {
   if(ring){paint.setStrokeWidth(1.7f*density);c.drawCircle(getWidth()/2f,getHeight()/2f,Math.min(getWidth(),getHeight())*.38f,paint);}
   float size=(ring?25:23)*density;c.save();c.translate((getWidth()-size)/2,(getHeight()-size)/2);c.scale(size/24,size/24);paint.setStrokeWidth(1.8f);
   switch(glyph){
+   case "history":c.drawArc(5,4,21,20,-150,310,false,paint);path(c,2,4,2,10,8,10);path(c,13,7,13,12,17,14);break;
+   case "heart":{Path p=new Path();p.moveTo(12,20);p.cubicTo(1,13,1,5,6,4);p.cubicTo(9,3,11,5,12,7);p.cubicTo(13,5,15,3,18,4);p.cubicTo(23,5,23,13,12,20);c.drawPath(p,paint);break;}
+   case "sort":line(c,4,6,20,6);line(c,4,12,15,12);line(c,4,18,10,18);break;
+   case "lock":c.drawRoundRect(5,10,19,21,2,2,paint);c.drawArc(8,2,16,14,180,180,false,paint);line(c,12,14,12,17);break;
+   case "unlock":c.drawRoundRect(5,10,19,21,2,2,paint);c.drawArc(8,2,16,14,175,160,false,paint);line(c,12,14,12,17);break;
+   case "pip":c.drawRoundRect(3,4,21,20,2,2,paint);c.drawRect(12,12,19,18,paint);break;
+   case "subtitles":c.drawRoundRect(3,5,21,19,2,2,paint);line(c,6,13,10,13);line(c,14,13,18,13);line(c,6,16,18,16);break;
    case "play":triangle(c,8,5,19,12,8,19);break;
    case "pause":line(c,8.5f,5,8.5f,19);line(c,15.5f,5,15.5f,19);break;
    case "previous":line(c,5,5,5,19);triangle(c,18,5,7,12,18,19);break;

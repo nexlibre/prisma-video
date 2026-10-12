@@ -1,57 +1,66 @@
-# Prisma Video · 1.0.1 beta
+# Prisma Video · 2.0.0 beta
+
+Reproductor local para Android 8 o posterior. Minimalista, gratuito y abierto, sin anuncios, cuentas ni permiso de Internet.
 
 ## Descargar para Android
 
-[**⬇ Descargar APK · Prisma Video 1.0.1 beta**](https://github.com/nexlibre/prisma-video/releases/download/v1.0.1-beta/Prisma-Video-1.0.1-beta.apk)
+[**⬇ Descargar APK · Prisma Video 2.0.0 beta**](https://github.com/nexlibre/prisma-video/releases/download/v2.0.0-beta/Prisma-Video-2.0.0-beta.apk)
 
-[Ver la versión y sus archivos](https://github.com/nexlibre/prisma-video/releases/tag/v1.0.1-beta)
+[Ver la versión y sus archivos](https://github.com/nexlibre/prisma-video/releases/tag/v2.0.0-beta)
 
-Toca **Descargar APK** desde tu teléfono y abre el archivo descargado para instalarlo. Requiere Android 8 o posterior. En la página de la versión también aparece dentro de **Assets / Recursos**, con el nombre `Prisma-Video-1.0.1-beta.apk`.
+Descarga la APK y abre el archivo para instalarlo. Se instala sobre las versiones anteriores conservando los ajustes. También se encuentra en **Assets / Recursos** de la versión.
 
+## Reproducción
 
-Reproductor local para Android 8.0 o posterior. Interfaz minimalista en español, sin conexión a Internet, anuncios ni cuentas.
+- Biblioteca local con búsqueda por nombre, archivos externos y exclusión persistente de carpetas/subcarpetas.
+- Temas día y negro AMOLED, acentos menta/ámbar/azul y controles vectoriales.
+- Línea de tiempo fina; anterior, reproducir/pausar y siguiente. Sin botones grandes de salto.
+- Doble toque en los extremos para saltar entre 1 y 120 segundos, por defecto 5. El centro no provoca saltos.
+- Gestos de búsqueda horizontal, brillo a la izquierda y volumen a la derecha. Se pueden desactivar por separado.
+- Cola con todos/repetir uno/aleatorio y reproducción del siguiente archivo opcional.
+- Solo audio con controles multimedia en la notificación y reproducción en segundo plano.
+- Amplificación hasta 200 % con LoudnessEnhancer cuando el dispositivo lo admite. La ganancia máxima es aproximadamente +6 dB; el volumen del sistema también influye. En equipos incompatibles se limita a 100 %.
+- Reanudación de la posición de cada vídeo, con pausa al desconectar auriculares y gestión del foco de audio.
 
-## Incluido
+## Opciones avanzadas
 
-- Biblioteca de vídeos de MediaStore, búsqueda por nombre y actualización manual.
-- Abrir un vídeo con el selector de archivos de Android o desde otra aplicación.
-- Exclusión persistente de carpetas y sus subcarpetas. Se pueden marcar las carpetas detectadas o introducir una ruta relativa, como `Movies/Privados`.
-- Tema día y noche negro AMOLED, recordado entre aperturas.
-- Reproducir y pausar, vídeo anterior y siguiente y línea de tiempo fina. Controles con íconos vectoriales, sin botones de salto ni paneles grandes.
-- Doble toque en el 30 % izquierdo para retroceder y en el 30 % derecho para avanzar. El centro no provoca saltos. Por defecto 5 segundos; editable de 1 a 120 segundos en Ajustes.
-- Deslizamiento horizontal sobre el vídeo: busca hasta 120 segundos a lo largo del ancho de la pantalla, con vista previa de tiempo; aplica el salto al soltar.
-- Deslizamiento vertical a la izquierda: brillo de esta ventana. A la derecha: volumen del reproductor.
-- Cola de la lista visible, repetir todos, repetir uno y aleatorio evitando repetir inmediatamente el mismo archivo cuando hay varias opciones.
-- Modo solo audio con notificación multimedia, controles y reproducción en segundo plano/con pantalla apagada.
-- Volumen de 0 a 200 %. Hasta 100 % regula la señal; por encima usa LoudnessEnhancer, con ganancia máxima de unos +6 dB. Si el efecto no está disponible se limita al 100 % y se informa al usuario. El volumen del sistema también influye en lo que se escucha.
-- Pausa al desconectar auriculares y gestión del foco de audio.
-- Pantalla completa horizontal, vídeo ajustado sin deformación y controles que se ocultan tras 4 segundos. Un toque muestra u oculta tanto los controles como el título. Las opciones de volumen y amplificación se encuentran en el menú de tres puntos.
+En el reproductor hay accesos con íconos a **Subtítulos** y **PiP**. El menú de tres puntos agrupa las demás funciones:
 
-## Uso
+- **PiP:** ventana flotante del sistema con controles multimedia. Entrada manual o automática opcional al ir a Inicio. Si Android lo bloquea, habilita Pantalla en pantalla en la información de esta app.
+- **Subtítulos SRT/VTT externos:** selecciona el archivo desde Android; se recuerda por vídeo mientras se mantenga el permiso de lectura. UTF-8, UTF-16 con BOM y Windows-1252. Hasta 5 MB y 50 000 líneas temporizadas; texto por línea limitado a 4096 caracteres. Estilo de texto plano, con etiquetas de formato eliminadas.
+- **Sincronización:** de −10 000 a +10 000 ms. Un valor positivo retrasa el texto; uno negativo lo adelanta. Tamaño de 14 a 32, tres colores y fondo opcional.
+- **Velocidad:** de 0,25× a 3×, conservando el tono cuando lo admite el motor.
+- **Pistas de audio:** selección entre las pistas que informa el dispositivo.
+- **Imagen:** ajustar sin recortar, llenar/recortar y estirar. Pellizcar para ampliar de 1× a 3×; el zoom se restablece en cada vídeo.
+- **Bloqueo:** desactiva los controles y gestos; usa el ícono de desbloqueo para recuperarlos.
+- **Temporizador:** pausa dentro de 5, 15, 30 o 60 minutos, o al terminar el vídeo. Se cancela al cerrar la reproducción; no persiste si Android termina el proceso.
+- **Marcadores:** hasta 100 momentos con nombre por archivo. También hay repetición A–B; A y B deben estar separados al menos medio segundo. El fragmento se restablece al cambiar de vídeo.
+- **Información:** duración, resolución, tipo, carpeta y velocidad.
 
-Instala `Prisma-Video-1.0.1-beta.apk`. Autoriza el acceso a vídeos y, si lo deseas, las notificaciones. En Android 14 o posterior puedes autorizar solo una selección: la biblioteca mostrará los archivos autorizados. El botón Actualizar permite revisar ese acceso. También puedes usar Abrir archivo.
+## Biblioteca y ajustes
 
-Las exclusiones ocultan carpetas de la biblioteca y de nuevas colas; no borran archivos ni impiden abrir voluntariamente un archivo con el selector. La exclusión de una carpeta no interrumpe una cola ya iniciada.
+Los íconos de la biblioteca permiten abrir el historial de los últimos 30 vídeos, filtrar favoritos, ordenar, actualizar y abrir un archivo. Se puede ordenar por fecha de incorporación, nombre o duración, y filtrar vídeos de menos de 10, 30 o 60 segundos.
 
-La reproducción de vídeo se pausa al salir de la app; activa Solo audio para seguir escuchando. El brillo vuelve a ser el del sistema al salir de la pantalla de reproducción.
+Los ajustes se agrupan en Apariencia, Reproducción, Gestos y controles, Subtítulos, Biblioteca y privacidad, y Acerca de. Puedes desactivar la reanudación, configurar el tiempo de ocultación y borrar historial/posiciones sin borrar vídeos, favoritos ni marcadores.
 
-## Compilar y publicar
+Las exclusiones ocultan archivos de la biblioteca y nuevas colas; no los borran ni impiden abrirlos voluntariamente con el selector. No modifican una cola ya iniciada. El brillo solo afecta esta ventana. La reproducción se pausa cuando la app deja de ser visible, salvo en modo Solo audio; PiP visible sigue reproduciendo.
 
-Android Studio, JDK 17, Android SDK 35 y Gradle 8.9:
+En Android 14 o posterior, la biblioteca respeta los vídeos que autorices, incluida una selección parcial. El botón Actualizar permite revisar el permiso.
+
+## Compilación y validación
+
+JDK 17, Android SDK 35 y Gradle 8.9:
 
 ```sh
 ./gradlew assembleDebug lintDebug
+mkdir -p build/subtitle-tests
+javac -d build/subtitle-tests app/src/main/java/org/nexlibre/prismavideo/SubtitleTrack.java tests/SubtitleTrackTest.java
+java -cp build/subtitle-tests SubtitleTrackTest
 ```
 
-La APK queda en `app/build/outputs/apk/debug/app-debug.apk`. El proyecto incluye una clave de desarrollo conocida para que las betas siguientes puedan instalarse sobre esta. No es una clave de producción. Antes de distribuir una edición de producción debe configurarse una firma privada propia.
+GitHub Actions compila, ejecuta Android Lint y las pruebas del lector SRT/VTT y publica automáticamente la APK beta. Los cambios exclusivamente de documentación no recompilan. La clave de desarrollo incluida mantiene compatibles las instalaciones de las betas; una distribución de producción requiere una firma privada propia.
 
-Sube el contenido de este proyecto a la raíz de un repositorio nuevo, en la rama `main`. El flujo de GitHub Actions compila, ejecuta Android Lint y publica la APK en una prerelease `v1.0.1-beta` automáticamente. Necesita GitHub Actions habilitado y permisos de escritura para el flujo. Las futuras versiones deben actualizar versionCode, versionName y las referencias a versión del flujo.
-
-## Estado de validación
-
-La entrega inicial fue compilada contra SDK 35, convertida a DEX y empaquetada; se verificaron la firma APK v2/v3, alineación y manifiesto. No fue instalada en un dispositivo o emulador en este entorno. Las pruebas de reproducción, gestos, permisos, orientación, segundo plano y compatibilidad del amplificador deben realizarse en el teléfono antes de considerar estable esta beta. La compatibilidad de formatos y códecs depende del MediaPlayer del dispositivo.
-
-La app usa únicamente APIs de Android y no solicita permiso de Internet. No incluye streaming, subtítulos, ecualizador ni historial en esta primera beta.
+El lector de subtítulos se prueba con límites temporales, solapamientos, búsquedas después de saltos, codificaciones, orden, archivos inválidos y límites de tamaño. La reproducción, PiP, el cambio de orientación, los gestos y el aspecto visual requieren pruebas en dispositivos. No se afirma equivalencia con VLC o KMPlayer en cobertura de formatos: el motor MediaPlayer usa los códecs de Android. Esta versión no incorpora FFmpeg, streaming, ASS/SSA ni selección de subtítulos incrustados.
 
 ## Licencia
 
