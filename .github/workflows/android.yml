@@ -23,17 +23,16 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug lintDebug --no-daemon
-          cp app/build/outputs/apk/debug/app-debug.apk Prisma-Video-1.0.0-beta.apk
+          cp app/build/outputs/apk/debug/app-debug.apk Prisma-Video-1.0.1-beta.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Prisma-Video-1.0.0-beta
-          path: Prisma-Video-1.0.0-beta.apk
+          name: Prisma-Video-1.0.1-beta
+          path: Prisma-Video-1.0.1-beta.apk
       - name: Publicar beta descargable
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if ! gh release view v1.0.0-beta >/dev/null 2>&1; then
-            gh release create v1.0.0-beta --target "$GITHUB_SHA" --title 'Prisma Video 1.0.0 beta' --prerelease --notes-file RELEASE.md
+          if ! gh release view v1.0.1-beta >/dev/null 2>&1; then
+            gh release create v1.0.1-beta --target "$GITHUB_SHA" --title 'Prisma Video 1.0.1 beta' --prerelease --notes-file RELEASE.md
           fi
-          gh release upload v1.0.0-beta Prisma-Video-1.0.0-beta.apk --clobber
-
+          gh release upload v1.0.1-beta Prisma-Video-1.0.1-beta.apk --clobber

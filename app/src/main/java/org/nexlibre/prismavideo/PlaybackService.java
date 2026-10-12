@@ -55,6 +55,7 @@ public class PlaybackService extends Service {
  public int duration(){return prepared?player.getDuration():0;}
  public void setQueue(List<VideoItem> items,int selected){queue.clear();queue.addAll(items);index=selected;open();}
  public void setSurface(Surface value){surface=value;if(player!=null)player.setSurface(audioOnly?null:surface);}
+ public void clearSurface(Surface value){if(surface==value)setSurface(null);}
  public void setAudioOnly(boolean value){audioOnly=value;setSurface(surface);changed();}
  private void releasePlayer(){prepared=false;generation++;if(enhancer!=null){enhancer.release();enhancer=null;}if(player!=null){player.release();player=null;}}
  private void open(){
