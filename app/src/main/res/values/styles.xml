@@ -1,0 +1,7 @@
+<resources>
+    <style name="PrismaTimeline" parent="@android:style/Widget.Material.SeekBar">
+        <item name="android:minHeight">3dp</item>
+        <item name="android:maxHeight">3dp</item>
+        <item name="android:splitTrack">false</item>
+    </style>
+</resources>

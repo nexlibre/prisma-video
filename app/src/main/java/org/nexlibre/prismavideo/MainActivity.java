@@ -122,11 +122,11 @@ public class MainActivity extends Activity implements PlaybackService.Listener {
   controls=column();controls.setPadding(dp(12),dp(22),dp(12),dp(10));
   controls.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0x00000000,0x99000000,0xC4000000}));playerFrame.addView(controls,new FrameLayout.LayoutParams(-1,-2,Gravity.BOTTOM));
   LinearLayout times=row();time=text(clock(playback.position()),12,Color.WHITE);totalTime=text(clock(playback.duration()),12,Color.WHITE);times.addView(time);spacer(times);times.addView(totalTime);controls.addView(times);
-  timeline=new SeekBar(this);timeline.setPadding(dp(2),0,dp(2),0);
+  timeline=new SeekBar(this,null,0,R.style.PrismaTimeline);timeline.setPadding(dp(2),0,dp(2),0);
   GradientDrawable empty=new GradientDrawable();empty.setColor(0x55FFFFFF);empty.setCornerRadius(dp(2));
   GradientDrawable progress=new GradientDrawable();progress.setColor(accent);progress.setCornerRadius(dp(2));
   android.graphics.drawable.ClipDrawable clip=new android.graphics.drawable.ClipDrawable(progress,Gravity.LEFT,android.graphics.drawable.ClipDrawable.HORIZONTAL);
-  android.graphics.drawable.LayerDrawable track=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{empty,clip});track.setId(0,android.R.id.background);track.setId(1,android.R.id.progress);timeline.setProgressDrawable(track);timeline.setProgressTintList(android.content.res.ColorStateList.valueOf(accent));timeline.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(0x55FFFFFF));timeline.setMinHeight(dp(3));timeline.setMaxHeight(dp(3));
+  android.graphics.drawable.LayerDrawable track=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{empty,clip});track.setId(0,android.R.id.background);track.setId(1,android.R.id.progress);timeline.setProgressDrawable(track);timeline.setProgressTintList(android.content.res.ColorStateList.valueOf(accent));timeline.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(0x55FFFFFF));
   GradientDrawable thumb=new GradientDrawable();thumb.setShape(GradientDrawable.OVAL);thumb.setColor(accent);thumb.setSize(dp(12),dp(12));timeline.setThumb(thumb);timeline.setThumbOffset(dp(6));controls.addView(timeline,new LinearLayout.LayoutParams(-1,dp(32)));
   timeline.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar s,int p,boolean user){if(user)time.setText(clock(p));}public void onStartTrackingTouch(SeekBar s){dragging=true;handler.removeCallbacks(hideControls);}public void onStopTrackingTouch(SeekBar s){playback.seek(s.getProgress());dragging=false;scheduleHide();}});
   LinearLayout toolbar=row();int target=getResources().getConfiguration().screenWidthDp<360?40:44;
@@ -154,7 +154,7 @@ public class MainActivity extends Activity implements PlaybackService.Listener {
   GestureDetector detector=new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
    public boolean onDown(MotionEvent e){return true;}
    public boolean onSingleTapConfirmed(MotionEvent e){setControlsVisible(controls.getVisibility()!=View.VISIBLE);scheduleHide();return true;}
-   public boolean onDoubleTap(MotionEvent e){float fraction=e.getX()/Math.max(1,stage.getWidth());if(fraction>.30f&&fraction<.70f)return true;long delta=(fraction<=.30f?-1:1)*step()*1000L;playback.seek(playback.position()+delta);hud((delta<0?"−":"+")+step()+" s");return true;}
+   public boolean onDoubleTap(MotionEvent e){float fraction=e.getX()/Math.max(1,stage.getWidth());scheduleHide();if(fraction>.30f&&fraction<.70f)return true;long delta=(fraction<=.30f?-1:1)*step()*1000L;playback.seek(playback.position()+delta);hud((delta<0?"−":"+")+step()+" s");return true;}
   });
   touch.setOnTouchListener(new View.OnTouchListener(){float x,y,brightness;int startPosition,startVolume,direction;boolean moving;
    public boolean onTouch(View v,MotionEvent e){
