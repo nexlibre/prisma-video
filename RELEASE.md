@@ -1,21 +1,17 @@
-## Prisma Video 2.0.0 beta
+## Prisma Video 2.0.1 beta
 
-Actualización mayor con opciones avanzadas, conservando el reproductor con íconos y controles discretos.
+Organización de la biblioteca y gestión de archivos, manteniendo los temas Día y AMOLED y los controles con íconos.
 
-- Pantalla en pantalla (PiP), con acceso directo y entrada automática opcional al ir a Inicio.
-- Subtítulos externos SRT y VTT: carga local, archivo recordado por vídeo, tamaño, color, fondo y sincronización ±10 segundos.
-- Velocidad de 0,25× a 3× y selección de las pistas de audio disponibles.
-- Ajustar, llenar/recortar o estirar la imagen; zoom con dos dedos de 1× a 3×.
-- Bloqueo de controles y gestos para evitar toques accidentales.
-- Temporizador: 5, 15, 30 o 60 minutos, o hasta terminar el vídeo.
-- Reanudación de la posición por vídeo e historial de los últimos 30 archivos.
-- Favoritos, orden por nombre/fecha/duración y filtro de vídeos cortos.
-- Marcadores por vídeo y repetición de un fragmento A–B.
-- Ajustes por categorías, tres colores de acento, tiempo de ocultación y gestos configurables.
-- Información de resolución, duración, tipo de archivo y velocidad.
+- Listas de reproducción persistentes: crear, renombrar, seleccionar varios vídeos, ordenar por posición y reproducir en ese orden.
+- Quitar vídeos de listas y eliminar listas sin borrar archivos.
+- Explorador de carpetas dentro de la app, con conteo de vídeos y búsqueda dentro de cada carpeta.
+- Menú por pulsación prolongada y botón de tres puntos en cada vídeo.
+- Añadir a listas y favoritos, compartir archivos e información desde la biblioteca.
+- Eliminación permanente de archivos con confirmación y permisos de Android; limpieza de referencias solo tras un borrado autorizado.
+- Conserva PiP, subtítulos SRT/VTT, velocidad, pistas de audio, gestos, marcadores y demás funciones de 2.0.0.
 
-**Instalación:** descarga `Prisma-Video-2.0.0-beta.apk`. Puede instalarse sobre las betas anteriores conservando los ajustes, con Android 8 o posterior.
+**Instalación:** descarga `Prisma-Video-2.0.1-beta.apk`. Se instala sobre las betas anteriores conservando los ajustes, en Android 8 o posterior.
 
-PiP requiere compatibilidad y autorización en Android. La cobertura de códecs y pistas de audio sigue dependiendo del dispositivo. Esta beta admite subtítulos externos SRT/VTT; no incluye todavía selección de subtítulos incrustados, ASS/SSA ni descarga de subtítulos por Internet.
+Las listas respetan permisos, exclusiones y filtro de duración; los archivos no disponibles no se reproducen. Mantén pulsado un vídeo de la lista y elige «Mover en la lista» para cambiar su posición. Las colas ya iniciadas mantienen su orden hasta volver a abrir la lista.
 
-Compilación, Android Lint, firma y pruebas del lector de subtítulos verificadas. PiP, gestos, reproducción y estilos deben comprobarse en un teléfono antes de considerar estable la versión.
+El flujo de publicación exige compilación, Android Lint y pruebas de subtítulos y orden de listas. La interfaz, reproducción, compartir y las confirmaciones de eliminación requieren comprobación en dispositivos Android 8/9, 10 y 11 o posterior. No se han ejecutado pruebas físicas en teléfonos durante esta actualización.

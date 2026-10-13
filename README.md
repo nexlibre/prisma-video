@@ -1,12 +1,12 @@
-# Prisma Video · 2.0.0 beta
+# Prisma Video · 2.0.1 beta
 
 Reproductor local para Android 8 o posterior. Minimalista, gratuito y abierto, sin anuncios, cuentas ni permiso de Internet.
 
 ## Descargar para Android
 
-[**⬇ Descargar APK · Prisma Video 2.0.0 beta**](https://github.com/nexlibre/prisma-video/releases/download/v2.0.0-beta/Prisma-Video-2.0.0-beta.apk)
+[**⬇ Descargar APK · Prisma Video 2.0.1 beta**](https://github.com/nexlibre/prisma-video/releases/download/v2.0.1-beta/Prisma-Video-2.0.1-beta.apk)
 
-[Ver la versión y sus archivos](https://github.com/nexlibre/prisma-video/releases/tag/v2.0.0-beta)
+[Ver la versión y sus archivos](https://github.com/nexlibre/prisma-video/releases/tag/v2.0.1-beta)
 
 Descarga la APK y abre el archivo para instalarlo. Se instala sobre las versiones anteriores conservando los ajustes. También se encuentra en **Assets / Recursos** de la versión.
 
@@ -37,6 +37,15 @@ En el reproductor hay accesos con íconos a **Subtítulos** y **PiP**. El menú 
 - **Marcadores:** hasta 100 momentos con nombre por archivo. También hay repetición A–B; A y B deben estar separados al menos medio segundo. El fragmento se restablece al cambiar de vídeo.
 - **Información:** duración, resolución, tipo, carpeta y velocidad.
 
+## Novedades de 2.0.1 beta
+
+- Listas de reproducción locales: crear, renombrar, añadir varios vídeos, quitar y ordenar por posición. Se conservan al cerrar la app. Eliminar una lista conserva los archivos.
+- Explorador de carpetas integrado con conteos; abre una carpeta para buscar y reproducir sus vídeos.
+- Menú al mantener pulsado un vídeo o tocar sus tres puntos: reproducir, añadir a lista, favoritos, compartir, información y eliminar archivo.
+- Eliminación permanente con confirmación y autorización de Android cuando corresponda; limpia las listas, favoritos, historial y cola después del borrado. Cancelar conserva el archivo y sus referencias.
+
+Las listas solo reproducen archivos disponibles y autorizados en la biblioteca. Las exclusiones, los permisos parciales y el filtro de duración también se respetan dentro de las listas; sus referencias se conservan si un archivo queda temporalmente oculto. El orden de una lista se cambia en el menú de cada vídeo. Una cola ya iniciada conserva su orden hasta abrir nuevamente la lista.
+
 ## Biblioteca y ajustes
 
 Los íconos de la biblioteca permiten abrir el historial de los últimos 30 vídeos, filtrar favoritos, ordenar, actualizar y abrir un archivo. Se puede ordenar por fecha de incorporación, nombre o duración, y filtrar vídeos de menos de 10, 30 o 60 segundos.
@@ -58,7 +67,7 @@ javac -d build/subtitle-tests app/src/main/java/org/nexlibre/prismavideo/Subtitl
 java -cp build/subtitle-tests SubtitleTrackTest
 ```
 
-GitHub Actions compila, ejecuta Android Lint y las pruebas del lector SRT/VTT y publica automáticamente la APK beta. Los cambios exclusivamente de documentación no recompilan. La clave de desarrollo incluida mantiene compatibles las instalaciones de las betas; una distribución de producción requiere una firma privada propia.
+GitHub Actions compila, ejecuta Android Lint y las pruebas del lector SRT/VTT y del orden de las listas y publica automáticamente la APK beta. Los cambios exclusivamente de documentación no recompilan. La clave de desarrollo incluida mantiene compatibles las instalaciones de las betas; una distribución de producción requiere una firma privada propia.
 
 El lector de subtítulos se prueba con límites temporales, solapamientos, búsquedas después de saltos, codificaciones, orden, archivos inválidos y límites de tamaño. La reproducción, PiP, el cambio de orientación, los gestos y el aspecto visual requieren pruebas en dispositivos. No se afirma equivalencia con VLC o KMPlayer en cobertura de formatos: el motor MediaPlayer usa los códecs de Android. Esta versión no incorpora FFmpeg, streaming, ASS/SSA ni selección de subtítulos incrustados.
 
