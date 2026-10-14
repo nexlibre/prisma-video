@@ -36,9 +36,9 @@ public class PlaybackEngineTest {
    }));engine.get().open(Uri.fromFile(file),null);});
    assertTrue("Preparation timed out",ready.await(20,TimeUnit.SECONDS));assertNull(error.get());
    main(()->{assertTrue(engine.get().duration()>=1800);assertFalse(engine.get().audioTracks().isEmpty());
-    engine.get().selectAudioTrack(engine.get().audioTracks().get(0));engine.get().seek(500);engine.get().setSpeed(1.25f);engine.get().play();});
+    engine.get().selectAudioTrack(engine.get().audioTracks().get(0));assertFalse(engine.get().subtitleTracks().isEmpty());engine.get().selectSubtitleTrack(engine.get().subtitleTracks().get(0));engine.get().seek(500);engine.get().setSpeed(1.25f);engine.get().play();});
    Thread.sleep(500);
-   main(()->{assertTrue(engine.get().position()>500);engine.get().pause();assertFalse(engine.get().isPlaying());engine.get().seek(1000);engine.get().play();});
+   main(()->{assertTrue(engine.get().position()>500);assertFalse(engine.get().cues().isEmpty());assertTrue(engine.get().cues().get(0).text.toString().contains("Prisma"));engine.get().pause();assertFalse(engine.get().isPlaying());engine.get().seek(1000);engine.get().play();});
    assertTrue("Completion timed out",ended.await(20,TimeUnit.SECONDS));assertNull(error.get());
   }finally{main(()->{if(engine.get()!=null)engine.get().release();});file.delete();}
  }

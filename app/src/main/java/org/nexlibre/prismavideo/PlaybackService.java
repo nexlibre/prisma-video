@@ -20,6 +20,7 @@ public class PlaybackService extends Service {
  public int index=0, mode=0, volume=100; // 0 all, 1 one, 2 shuffle
  public boolean prepared=false, audioOnly=false, boostAvailable=true;
  private LoudnessEnhancer enhancer;
+ private android.media.audiofx.Equalizer equalizer;
  private MediaSession session;
  private AudioManager audio;
  private AudioFocusRequest focus;
@@ -67,32 +68,42 @@ public class PlaybackService extends Service {
  public void setQueue(List<VideoItem> items,int selected){savePosition();if(items.isEmpty()||selected<0||selected>=items.size())return;queue.clear();queue.addAll(items);shuffle.reset();index=selected;open();}
  public void setSurface(Surface value){surface=value;if(player!=null)player.setSurface(audioOnly?null:surface);}
  public void clearSurface(Surface value){if(surface==value)setSurface(null);}
- public void setAudioOnly(boolean value){audioOnly=value;setSurface(surface);changed();}
- private void releasePlayer(){savePosition();prepared=false;generation++;if(enhancer!=null){enhancer.release();enhancer=null;}if(player!=null){player.release();player=null;}}
+ public void setAudioOnly(boolean value){audioOnly=value;if(player!=null)player.setAudioOnly(value);setSurface(surface);changed();}
+ private void releasePlayer(){savePosition();prepared=false;generation++;if(enhancer!=null){enhancer.release();enhancer=null;}if(equalizer!=null){equalizer.release();equalizer=null;}if(player!=null){player.release();player=null;}}
  private void open(){
-  releasePlayer();playRequested=true;VideoItem item=current();loadedItem=item;loopA=loopB=-1;if(item==null)return;recordHistory(item);
+  releasePlayer();playRequested=true;VideoItem item=current();loadedItem=item;if(item!=null)speed=history.getFloat("speed:"+item.uri,settings.getFloat("speed",1f));loopA=loopB=-1;if(item==null)return;recordHistory(item);
   final int token=generation;
   player=new PlaybackEngine(this,new PlaybackEngine.Events(){
    public void ready(){if(token!=generation)return;prepared=true;
     try{enhancer=new LoudnessEnhancer(player.audioSessionId());boostAvailable=true;}catch(RuntimeException e){boostAvailable=false;volume=Math.min(volume,100);}
-    applyVolume();applySpeed();long resume=settings.getBoolean("resume",true)?history.getLong("position:"+item.uri,0):0;if(resume>0&&resume<duration()-2000)seek(resume);if(playRequested)play();changed();
+    restoreTracks();selectEqualizerPreset(settings.getInt("equalizerPreset",-1));applyVolume();applySpeed();long resume=settings.getBoolean("resume",true)?history.getLong("position:"+item.uri,0):0;if(resume>0&&resume<duration()-2000)seek(resume);if(playRequested)play();changed();
    }
    public void ended(){if(token!=generation)return;history.edit().remove("position:"+item.uri).apply();if(sleepAtEnd){sleepAtEnd=false;pause();}else if(mode==1){seek(0);play();}else if(settings.getBoolean("autoplay",true))next();else pause();}
    public void failed(String message){if(token!=generation)return;releasePlayer();audio.abandonAudioFocusRequest(focus);changed();if(listener!=null)listener.error(message);}
    public void changed(){if(token==generation)PlaybackService.this.changed();}
   });
-  try{player.open(item.uri,audioOnly?null:surface);changed();}
+  try{player.setAudioOnly(audioOnly);player.open(item.uri,audioOnly?null:surface);changed();}
   catch(RuntimeException e){releasePlayer();changed();if(listener!=null)listener.error("No se puede abrir el vídeo. Comprueba el acceso al archivo.");}
  }
  public int videoWidth(){return player==null?0:player.videoWidth();}
  public int videoHeight(){return player==null?0:player.videoHeight();}
  public List<PlaybackEngine.AudioTrack> audioTracks(){return player==null?Collections.emptyList():player.audioTracks();}
- public void selectAudioTrack(PlaybackEngine.AudioTrack track){if(player!=null)player.selectAudioTrack(track);}
+ public void selectAudioTrack(PlaybackEngine.AudioTrack track){if(player!=null){List<PlaybackEngine.AudioTrack> tracks=player.audioTracks();for(int i=0;i<tracks.size();i++)if(tracks.get(i).label.equals(track.label)){history.edit().putInt("audioTrack:"+current().uri,i).apply();break;}player.selectAudioTrack(track);}}
+ public List<PlaybackEngine.AudioTrack> subtitleTracks(){return player==null?Collections.emptyList():player.subtitleTracks();}
+ public List<androidx.media3.common.text.Cue> cues(){return player==null?Collections.emptyList():player.cues();}
+ public void selectSubtitleTrack(PlaybackEngine.AudioTrack track,int index){if(player!=null){player.selectSubtitleTrack(track);history.edit().putInt("textTrack:"+current().uri,index).apply();changed();}}
+ public void disableSubtitles(){if(player!=null){player.disableSubtitles();history.edit().putInt("textTrack:"+current().uri,-1).apply();changed();}}
+ private void restoreTracks(){List<PlaybackEngine.AudioTrack> tracks=player.audioTracks();int audioIndex=history.getInt("audioTrack:"+current().uri,-1);if(audioIndex>=0&&audioIndex<tracks.size())player.selectAudioTrack(tracks.get(audioIndex));tracks=player.subtitleTracks();int textIndex=history.getInt("textTrack:"+current().uri,-1);if(textIndex>=0&&textIndex<tracks.size())player.selectSubtitleTrack(tracks.get(textIndex));}
+
 
  public void play(){playRequested=true;if(!prepared)return;if(audio.requestAudioFocus(focus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED){playRequested=false;return;}player.play();changed();}
  public void pause(){playRequested=false;if(player!=null)player.pause();savePosition();changed();}
  public void toggle(){if(playRequested)pause();else play();}
  public void seek(long ms){if(prepared)player.seek(Math.max(0,Math.min(ms,duration())));}
+ public void moveQueue(int from,int to){if(from<0||from>=queue.size()||to<0||to>=queue.size())return;VideoItem active=current();VideoItem moved=queue.remove(from);queue.add(to,moved);index=queue.indexOf(active);shuffle.reset();changed();}
+ public void removeQueue(int target){if(target<0||target>=queue.size())return;if(queue.size()==1){stopPlayback();return;}boolean active=target==index;queue.remove(target);if(target<index)index--;if(index>=queue.size())index=0;shuffle.reset();if(active)open();else changed();}
+ public List<String> equalizerPresets(){List<String> result=new ArrayList<>();if(player==null||!prepared)return result;try{if(equalizer==null)equalizer=new android.media.audiofx.Equalizer(0,player.audioSessionId());for(short i=0;i<equalizer.getNumberOfPresets();i++)result.add(equalizer.getPresetName(i));}catch(RuntimeException e){if(equalizer!=null){equalizer.release();equalizer=null;}}return result;}
+ public boolean selectEqualizerPreset(int preset){try{if(preset<0){if(equalizer!=null)equalizer.setEnabled(false);}else{equalizerPresets();if(equalizer==null||preset>=equalizer.getNumberOfPresets())return false;equalizer.usePreset((short)preset);equalizer.setEnabled(true);}settings.edit().putInt("equalizerPreset",preset).apply();return true;}catch(RuntimeException e){return false;}}
  public void next(){if(queue.isEmpty())return;index=mode==2&&queue.size()>1?shuffle.next(queue.size(),index):(index+1)%queue.size();open();}
  public void previous(){if(queue.isEmpty())return;index=(index+queue.size()-1)%queue.size();open();}
  public void setMode(int m){mode=m;shuffle.reset();settings.edit().putInt("mode",m).apply();changed();}
@@ -101,7 +112,7 @@ public class PlaybackService extends Service {
   float level=Math.min(volume,100)/100f;player.setVolume(level);
   if(enhancer!=null)try{enhancer.setTargetGain(volume>100?(int)Math.round(2000*Math.log10(volume/100d)):0);enhancer.setEnabled(volume>100);}catch(RuntimeException e){boostAvailable=false;volume=Math.min(volume,100);enhancer.release();enhancer=null;if(listener!=null)listener.error("Este dispositivo no admite amplificación. Se mantiene el volumen hasta 100 %.");}
  }
- public boolean setSpeed(float value){float old=speed;speed=Math.max(.25f,Math.min(3f,value));if(!applySpeed()){speed=old;return false;}settings.edit().putFloat("speed",speed).apply();changed();return true;}
+ public boolean setSpeed(float value){float old=speed;speed=Math.max(.25f,Math.min(3f,value));if(!applySpeed()){speed=old;return false;}settings.edit().putFloat("speed",speed).apply();if(current()!=null)history.edit().putFloat("speed:"+current().uri,speed).apply();changed();return true;}
  private boolean applySpeed(){if(player==null)return true;try{player.setSpeed(speed);return true;}catch(RuntimeException e){if(listener!=null)listener.error("Este archivo o dispositivo no admite esa velocidad.");return false;}}
  public void setSleep(int minutes,boolean atEnd){clock.removeCallbacks(sleep);sleepAtEnd=atEnd;sleepDeadline=minutes>0?SystemClock.elapsedRealtime()+minutes*60000L:0;if(minutes>0)clock.postDelayed(sleep,minutes*60000L);changed();}
  public void markA(){loopA=position();loopB=-1;changed();}
@@ -110,6 +121,7 @@ public class PlaybackService extends Service {
  public void savePosition(){if(loadedItem==null||!prepared)return;int position=position();if(duration()>0&&position>=duration()-2000)position=0;history.edit().putLong("position:"+loadedItem.uri,position).apply();}
  private void recordHistory(VideoItem item){try{JSONArray old=new JSONArray(history.getString("items","[]")),next=new JSONArray();JSONObject row=new JSONObject();row.put("uri",item.uri.toString());row.put("title",item.title);row.put("folder",item.folder);row.put("duration",item.duration);next.put(row);for(int i=0;i<old.length()&&next.length()<30;i++){JSONObject v=old.getJSONObject(i);if(!v.getString("uri").equals(item.uri.toString()))next.put(v);}history.edit().putString("items",next.toString()).apply();}catch(JSONException e){history.edit().putString("items","[]").apply();}}
  public List<VideoItem> recent(){List<VideoItem> result=new ArrayList<>();try{JSONArray items=new JSONArray(history.getString("items","[]"));for(int i=0;i<items.length();i++){JSONObject v=items.getJSONObject(i);result.add(new VideoItem(android.net.Uri.parse(v.getString("uri")),v.getString("title"),v.optString("folder"),v.optLong("duration")));}}catch(JSONException e){}return result;}
+ public void renameVideo(android.net.Uri uri,String title){for(int i=0;i<queue.size();i++){VideoItem v=queue.get(i);if(v.uri.equals(uri))queue.set(i,new VideoItem(uri,title,v.folder,v.duration,v.size,v.width,v.height,v.dateAdded,v.mimeType));}try{JSONArray items=new JSONArray(history.getString("items","[]"));for(int i=0;i<items.length();i++)if(items.getJSONObject(i).getString("uri").equals(uri.toString()))items.getJSONObject(i).put("title",title);history.edit().putString("items",items.toString()).apply();}catch(JSONException e){}changed();}
  public void forgetVideo(android.net.Uri uri){VideoItem active=current();if(active!=null&&active.uri.equals(uri))stopPlayback();else{queue.removeIf(v->v.uri.equals(uri));shuffle.reset();if(active!=null)index=queue.indexOf(active);}try{JSONArray old=new JSONArray(history.getString("items","[]")),next=new JSONArray();for(int i=0;i<old.length();i++)if(!uri.toString().equals(old.getJSONObject(i).getString("uri")))next.put(old.getJSONObject(i));history.edit().putString("items",next.toString()).remove("position:"+uri).apply();}catch(JSONException e){history.edit().remove("position:"+uri).apply();}}
  public void clearHistory(){history.edit().clear().apply();loadedItem=null;}
  private void changed(){notification();if(listener!=null)listener.changed();}
