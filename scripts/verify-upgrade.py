@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Install the released beta, seed real legacy prefs, upgrade, and compare values."""
+import re
 import glob
 import shutil
 import json
@@ -42,7 +43,13 @@ subprocess.run([signer,'verify',old],check=True)
 subprocess.run([signer,'verify',new],check=True)
 def certificate(path):
  output=subprocess.check_output([signer,'verify','--print-certs',path],text=True)
- return next(line.split(': ',1)[1] for line in output.splitlines() if line.startswith('Signer #1 certificate SHA-256 digest:'))
+ digests=[]
+ for line in output.splitlines():
+  if line.startswith('Signer') and 'certificate SHA-256 digest:' in line:
+   match=re.search(r'certificate SHA-256 digest:\s*([0-9a-fA-F:]{64,95})',line)
+   if match: digests.append(match.group(1).replace(':','').lower())
+ assert digests, 'No signing certificate reported by apksigner'
+ return tuple(sorted(set(digests)))
 assert certificate(old)==certificate(new), 'Signing certificate changed'
 adb('install','-r',old)
 adb('shell','am','force-stop',package)

@@ -105,6 +105,7 @@ jobs:
           test -f Prisma-Video-5.0.1-beta.apk
           grep -q "versionName '5.0.1-beta'" app/build.gradle
           sha256sum Prisma-Video-5.0.1-beta.apk > SHA256SUMS
+          printf "\n## Ejecución de publicación validada\n\nCommit: %s\n\nEvidencia: https://github.com/%s/actions/runs/%s\n" "$GITHUB_SHA" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> docs/VALIDATION-5.0.1.md
           if gh release view v5.0.1-beta --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo 'La versión ya existe; no se sobrescriben sus archivos.'
             exit 1
