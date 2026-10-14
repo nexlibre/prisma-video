@@ -2,7 +2,7 @@
 set -euo pipefail
 collect() {
   mkdir -p app/build/reports/screenshots
-  adb pull /sdcard/Android/data/org.nexlibre.prismavideo/files/screenshots app/build/reports/screenshots || true
+  adb pull /sdcard/Download/PrismaTestScreenshots app/build/reports/screenshots || true
   adb logcat -d > app/build/reports/screenshots/logcat.txt || true
 }
 trap collect EXIT

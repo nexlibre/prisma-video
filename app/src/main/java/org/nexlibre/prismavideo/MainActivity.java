@@ -244,8 +244,8 @@ public class MainActivity extends Activity implements PlaybackService.Listener {
   controls.addView(toolbar);
   lockButton=icon(locked?"unlock":"lock",locked?"Desbloquear controles":"Bloquear controles",Color.WHITE,false,this::toggleLock);FrameLayout.LayoutParams lockLayout=new FrameLayout.LayoutParams(dp(48),dp(48),Gravity.TOP|Gravity.RIGHT);lockLayout.topMargin=dp(12);lockLayout.rightMargin=dp(12);playerFrame.addView(lockButton,lockLayout);lockButton.setVisibility(locked?View.VISIBLE:View.GONE);
   playerFrame.setOnApplyWindowInsetsListener((v,insets)->{
-   int left=0,right=0,top=0,bottom=0;
-   if(Build.VERSION.SDK_INT>=28&&insets.getDisplayCutout()!=null){android.view.DisplayCutout cutout=insets.getDisplayCutout();left=cutout.getSafeInsetLeft();right=cutout.getSafeInsetRight();top=cutout.getSafeInsetTop();bottom=cutout.getSafeInsetBottom();}
+   int left=insets.getStableInsetLeft(),right=insets.getStableInsetRight(),top=insets.getStableInsetTop(),bottom=insets.getStableInsetBottom();
+   if(Build.VERSION.SDK_INT>=28&&insets.getDisplayCutout()!=null){android.view.DisplayCutout cutout=insets.getDisplayCutout();left=Math.max(left,cutout.getSafeInsetLeft());right=Math.max(right,cutout.getSafeInsetRight());top=Math.max(top,cutout.getSafeInsetTop());bottom=Math.max(bottom,cutout.getSafeInsetBottom());}
    playerHeader.setPadding(left+dp(12),top+dp(8),right+dp(12),dp(18));controls.setPadding(left+dp(12),dp(22),right+dp(12),bottom+dp(10));FrameLayout.LayoutParams lp=(FrameLayout.LayoutParams)lockButton.getLayoutParams();lp.topMargin=top+dp(12);lp.rightMargin=right+dp(12);lockButton.setLayoutParams(lp);return insets;
   });playerFrame.requestApplyInsets();changed();scheduleHide();
  }

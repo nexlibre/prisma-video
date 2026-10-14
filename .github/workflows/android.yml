@@ -69,6 +69,7 @@ jobs:
         with:
           api-level: ${{ matrix.api }}
           arch: x86_64
+          profile: pixel_2
           disable-animations: true
           script: bash scripts/emulator-validation.sh
       - name: Informes del emulador

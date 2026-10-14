@@ -36,11 +36,14 @@ public class InterfaceTest {
   if(Build.VERSION.SDK_INT>=33)device.executeShellCommand("pm grant "+packageName+" android.permission.POST_NOTIFICATIONS");
   if(Build.VERSION.SDK_INT>=34)device.executeShellCommand("pm grant "+packageName+" android.permission.READ_MEDIA_VISUAL_USER_SELECTED");
  }
- @org.junit.Rule public final org.junit.rules.TestWatcher diagnostics=new org.junit.rules.TestWatcher(){@Override protected void failed(Throwable error,org.junit.runner.Description test){try{File folder=new File(context.getExternalFilesDir(null),"screenshots");folder.mkdirs();device.dumpWindowHierarchy(new File(folder,"failed-"+test.getMethodName()+".xml"));device.takeScreenshot(new File(folder,"failed-"+test.getMethodName()+".png"));}catch(Exception ignored){}}};
+ @org.junit.Rule public final org.junit.rules.TestWatcher diagnostics=new org.junit.rules.TestWatcher(){@Override protected void failed(Throwable error,org.junit.runner.Description test){try{File folder=new File(context.getExternalFilesDir(null),"screenshots");folder.mkdirs();device.dumpWindowHierarchy(new File(folder,"failed-"+test.getMethodName()+".xml"));device.takeScreenshot(new File(folder,"failed-"+test.getMethodName()+".png"));}catch(Exception ignored){}saveDiagnostics();}};
  private void clickText(String label){assertTrue("Missing "+label,device.wait(Until.hasObject(By.text(label)),10000));device.findObject(By.text(label)).click();}
- private void screenshot(String name){File folder=new File(context.getExternalFilesDir(null),"screenshots");folder.mkdirs();assertTrue(device.takeScreenshot(new File(folder,name+"-api"+Build.VERSION.SDK_INT+".png")));}
+ private void screenshot(String name){File folder=new File(context.getExternalFilesDir(null),"screenshots");folder.mkdirs();try{device.dumpWindowHierarchy(new File(folder,name+".xml"));}catch(Exception ignored){}assertTrue(device.takeScreenshot(new File(folder,name+"-api"+Build.VERSION.SDK_INT+".png")));saveDiagnostics();}
+ private void saveDiagnostics(){try{device.executeShellCommand("mkdir -p /sdcard/Download/PrismaTestScreenshots && cp -r /sdcard/Android/data/org.nexlibre.prismavideo/files/screenshots/. /sdcard/Download/PrismaTestScreenshots/");}catch(Exception ignored){}}
+
  @Test public void allThemesAndSelectionAreReachable() throws Exception {
   grant();try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)){
+   screenshot("library-initial");
    for(String theme:new String[]{"AMOLED Black","Light Minimal","Dynamic Color · Android 12+","Prisma Signature"}){
     assertTrue(device.wait(Until.hasObject(By.desc("Ajustes")),10000));device.findObject(By.desc("Ajustes")).click();clickText("Apariencia");clickText("Temas");clickText(theme);assertTrue(device.wait(Until.hasObject(By.text("Prisma Video")),10000));screenshot(theme.replaceAll("[^A-Za-z]",""));
    }
@@ -57,6 +60,7 @@ public class InterfaceTest {
   else{File folder=new File(android.os.Environment.getExternalStorageDirectory(),"Movies/PrismaTests");folder.mkdirs();File file=new File(folder,"Prisma-interface-test.mp4");try(FileOutputStream output=new FileOutputStream(file)){output.write(video);}java.util.concurrent.CountDownLatch scanned=new java.util.concurrent.CountDownLatch(1);java.util.concurrent.atomic.AtomicReference<Uri> result=new java.util.concurrent.atomic.AtomicReference<>();android.media.MediaScannerConnection.scanFile(context,new String[]{file.getPath()},new String[]{"video/mp4"},(path,value)->{result.set(value);scanned.countDown();});assertTrue(scanned.await(20,java.util.concurrent.TimeUnit.SECONDS));uri=result.get();assertNotNull(uri);}
   Intent intent=new Intent(context,MainActivity.class).setAction(Intent.ACTION_VIEW).setData(uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
   try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(intent)){
+   screenshot("player-initial");
    assertTrue("No video controls",device.wait(Until.hasObject(By.desc("Más opciones de reproducción")),15000));
    assertTrue("Video did not start",device.wait(Until.hasObject(By.desc("Pausar")),15000));device.findObject(By.desc("Pausar")).click();assertTrue(device.wait(Until.hasObject(By.desc("Reproducir")),5000));screenshot("player");
    if(context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)){
