@@ -29,12 +29,14 @@ public class InterfaceTest {
  private final Context context=InstrumentationRegistry.getInstrumentation().getTargetContext();
  private final UiDevice device=UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
  private void grant() throws Exception {
+  device.wakeUp();device.executeShellCommand("wm dismiss-keyguard");
   String packageName=context.getPackageName();
   device.executeShellCommand("pm grant "+packageName+" "+(Build.VERSION.SDK_INT>=33?"android.permission.READ_MEDIA_VIDEO":Manifest.permission.READ_EXTERNAL_STORAGE));
   if(Build.VERSION.SDK_INT<=28)device.executeShellCommand("pm grant "+packageName+" android.permission.WRITE_EXTERNAL_STORAGE");
   if(Build.VERSION.SDK_INT>=33)device.executeShellCommand("pm grant "+packageName+" android.permission.POST_NOTIFICATIONS");
   if(Build.VERSION.SDK_INT>=34)device.executeShellCommand("pm grant "+packageName+" android.permission.READ_MEDIA_VISUAL_USER_SELECTED");
  }
+ @org.junit.Rule public final org.junit.rules.TestWatcher diagnostics=new org.junit.rules.TestWatcher(){@Override protected void failed(Throwable error,org.junit.runner.Description test){try{File folder=new File(context.getExternalFilesDir(null),"screenshots");folder.mkdirs();device.dumpWindowHierarchy(new File(folder,"failed-"+test.getMethodName()+".xml"));device.takeScreenshot(new File(folder,"failed-"+test.getMethodName()+".png"));}catch(Exception ignored){}}};
  private void clickText(String label){assertTrue("Missing "+label,device.wait(Until.hasObject(By.text(label)),10000));device.findObject(By.text(label)).click();}
  private void screenshot(String name){File folder=new File(context.getExternalFilesDir(null),"screenshots");folder.mkdirs();assertTrue(device.takeScreenshot(new File(folder,name+"-api"+Build.VERSION.SDK_INT+".png")));}
  @Test public void allThemesAndSelectionAreReachable() throws Exception {
@@ -56,9 +58,9 @@ public class InterfaceTest {
   Intent intent=new Intent(context,MainActivity.class).setAction(Intent.ACTION_VIEW).setData(uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
   try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(intent)){
    assertTrue("No video controls",device.wait(Until.hasObject(By.desc("Más opciones de reproducción")),15000));
-   assertTrue("Video did not start",device.wait(Until.hasObject(By.desc("Pausar")),15000));screenshot("player");
+   assertTrue("Video did not start",device.wait(Until.hasObject(By.desc("Pausar")),15000));device.findObject(By.desc("Pausar")).click();assertTrue(device.wait(Until.hasObject(By.desc("Reproducir")),5000));screenshot("player");
    if(context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)){
-    device.findObject(By.desc("Pantalla en pantalla")).click();device.waitForIdle();scenario.onActivity(activity->assertTrue("PiP did not enter",activity.isInPictureInPictureMode()));screenshot("pip");
+    assertTrue(device.wait(Until.hasObject(By.desc("Pantalla en pantalla")),5000));device.findObject(By.desc("Pantalla en pantalla")).click();device.waitForIdle();scenario.onActivity(activity->assertTrue("PiP did not enter",activity.isInPictureInPictureMode()));screenshot("pip");
    }
   }finally{if(Build.VERSION.SDK_INT>=29)context.getContentResolver().delete(uri,null,null);else context.getContentResolver().delete(uri,null,null);}
  }
