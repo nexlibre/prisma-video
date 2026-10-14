@@ -19,7 +19,7 @@ La actualización completa **no está terminada**. No se ha publicado 5.0.1.
 | Diferenciación | Inmersión, marcadores, información y acceso externo SAF | Sin nuevos permisos | Modo Cine refinado, línea de tiempo, colecciones; evaluar USB, SMB, WebDAV y URL |
 | Rendimiento | ListView y escaneo en ejecutor | Media3; componente de reproducción separado | Mediciones, caché de miniaturas, RAM/energía y bibliotecas grandes |
 | Seguridad | Scoped Storage, permisos parciales, borrado autorizado, límites de subtítulos | CI sin permiso de escritura ni publicación automática | Revisar todas las entradas, archivos ausentes, persistencia SAF y servicios |
-| Pruebas | Pruebas Java de subtítulos y orden; assembleDebug y Lint en CI | Prueba de aleatorio; CI para rama/PR, APK de desarrollo como artefacto | Emuladores, dispositivos, migraciones y matriz multimedia |
+| Pruebas | Pruebas Java de subtítulos y orden; assembleDebug y Lint en CI | Prueba de aleatorio y pruebas instrumentadas del motor; CI para rama/PR, APK de desarrollo como artefacto | Smoke del motor configurado en emuladores API 26/35; faltan dispositivos, migraciones y matriz multimedia |
 | Repositorio | MIT, README, release, firma beta de desarrollo | Inventario y matriz de calidad; desarrollo aislado de release | CHANGELOG final, documentación modular y firma privada de producción |
 | Publicación | APK 2.0.1 disponible | No reemplaza APK anterior ni declara 5.0.1 completa | Compilar, validar actualización y firma, aprobar matriz y publicar APK final |
 
@@ -31,7 +31,7 @@ La actualización completa **no está terminada**. No se ha publicado 5.0.1.
 - El servicio mantiene MediaSession de Android mientras se valida la migración del motor; no se anuncia migración a Media3 MediaSession.
 - Las posiciones de interfaz siguen limitadas a enteros de milisegundos (~24,8 días); no se certifican vídeos de duración mayor.
 - Se opta por pausar ante interrupciones y exigir reproducción manual posterior. Ninguna aplicación puede garantizar detectar todas las grabaciones ajenas si estas no solicitan foco de audio.
-- El entorno local no tiene javac/SDK ni puede resolver services.gradle.org. Compilación, Lint y pruebas Java se delegan a CI; no se dan por aprobadas antes del resultado.
+- El entorno local no tiene javac/SDK ni puede resolver services.gradle.org. Actions 38502061873 aprobó compilación, Lint, las tres pruebas Java y dos pruebas instrumentadas del motor en cada emulador (API 26 y 35). Esto no acredita el servicio, la interfaz ni todos los formatos.
 - Se mantiene el número de versión 2.0.1 durante esta fase interna. El artefacto de CI se llama desarrollo 5.0.1, no release 5.0.1 instalable final.
 
 ## Secuencia de integración

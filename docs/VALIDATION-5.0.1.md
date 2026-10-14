@@ -5,7 +5,7 @@ archivo de prueba y hash, pasos, resultado, errores, tiempos y commit.
 
 | Comprobación | Casos mínimos | Estado |
 |---|---|---|
-| CI | Java: SRT/VTT, listas y aleatorio; assembleDebug; lintDebug | Pendiente de ejecución remota |
+| CI | Java: SRT/VTT, listas y aleatorio; assembleDebug; lintDebug | Aprobada en Actions 38502061873: Java, assembleDebug y lintDebug |
 | Motor | MP4/H264/AAC; MKV; WebM/VP9; HEVC; AV1; MOV; AVI; MPEG; corrupto e inaccesible | No ejecutada |
 | Hardware | 720p/1080p/2K/4K; HDR10/HLG; códec ausente y fallback | No ejecutada |
 | Servicio | Abrir/cerrar, cambiar vídeo durante preparación, superficie destruida, audio solo, notificación | No ejecutada |
@@ -25,3 +25,20 @@ La firma de desarrollo existente permite comparar betas, pero no sustituye una
 firma privada de producción. Verificar certificado, applicationId y versionCode
 antes de cualquier publicación. FFmpeg/LibVLC requieren un análisis específico
 de licencia y tamaño antes de incorporarlos.
+
+## Prueba automatizada del motor
+
+`PlaybackEngineTest` se ejecuta en emuladores API 26 y 35. Usa un archivo
+sintético original de dos segundos, H.264 64×64 y AAC, sin material de terceros.
+Se guarda en Base64 entre los recursos de androidTest y se decodifica en la
+caché del dispositivo; no se incorpora al APK principal.
+SHA-256 del MP4: `210e4137384cc17cda14c411b62cc68861885882e29858504f1e477aebe48644`.
+
+Comprueba preparación, duración, selección de audio, seek, velocidad,
+progreso, pausa, finalización y error de archivo ausente. Usa superficie nula:
+no demuestra presentación de fotogramas, gestos, PiP, foco del servicio ni HDR.
+Los informes se conservan como artefactos de Actions. Estado: aprobado en ambas APIs (dos pruebas por emulador; cuatro ejecuciones), en el commit `3432d56b405e6ea719ba43509c051b0c2ca1645f`.
+
+Evidencia: https://github.com/nexlibre/prisma-video/actions/runs/38502061873
+
+La validación del servicio, foco, interfaz, migración de instalación, códecs distintos y dispositivos reales sigue pendiente.

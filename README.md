@@ -10,6 +10,17 @@ Reproductor local para Android 8 o posterior. Minimalista, gratuito y abierto, s
 
 Descarga la APK y abre el archivo para instalarlo. Se instala sobre las versiones anteriores conservando los ajustes. También se encuentra en **Assets / Recursos** de la versión.
 
+## Desarrollo de la consolidación 5.0.1
+
+**Estado: en desarrollo; no es una beta terminada.** El APK de 2.0.1 indicado arriba sigue siendo la versión publicada.
+
+- [Inventario de funciones existentes, parciales y pendientes](docs/BETA-5.0.1-AUDIT.md).
+- [Matriz y límites de validación](docs/VALIDATION-5.0.1.md).
+- [Evaluación del motor y alternativas](docs/PLAYBACK-ENGINE-DECISION.md).
+- [Cambios y resultados de CI](https://github.com/nexlibre/prisma-video/pull/1).
+
+En esta rama, el servicio utiliza un núcleo Media3 separado y el almacenamiento de datos conserva su esquema anterior. Los APK de Actions son artefactos de desarrollo: no equivalen a una release 5.0.1. La publicación final requiere completar las fases y las comprobaciones del inventario.
+
 ## Reproducción
 
 - Biblioteca local con búsqueda por nombre, archivos externos y exclusión persistente de carpetas/subcarpetas.
@@ -67,9 +78,9 @@ javac -d build/subtitle-tests app/src/main/java/org/nexlibre/prismavideo/Subtitl
 java -cp build/subtitle-tests SubtitleTrackTest
 ```
 
-GitHub Actions compila, ejecuta Android Lint y las pruebas del lector SRT/VTT y del orden de las listas y publica automáticamente la APK beta. Los cambios exclusivamente de documentación no recompilan. La clave de desarrollo incluida mantiene compatibles las instalaciones de las betas; una distribución de producción requiere una firma privada propia.
+En esta rama, GitHub Actions compila, ejecuta Android Lint, prueba SRT/VTT, listas y aleatorio, y ejecuta pruebas del motor en emuladores API 26/35. Guarda APK e informes como artefactos; no publica ni reemplaza Releases automáticamente. Los cambios exclusivamente de documentación no recompilan. La clave de desarrollo incluida mantiene compatibles las instalaciones de las betas; una distribución de producción requiere una firma privada propia.
 
-El lector de subtítulos se prueba con límites temporales, solapamientos, búsquedas después de saltos, codificaciones, orden, archivos inválidos y límites de tamaño. La reproducción, PiP, el cambio de orientación, los gestos y el aspecto visual requieren pruebas en dispositivos. No se afirma equivalencia con VLC o KMPlayer en cobertura de formatos: el motor MediaPlayer usa los códecs de Android. Esta versión no incorpora FFmpeg, streaming, ASS/SSA ni selección de subtítulos incrustados.
+El lector de subtítulos se prueba con límites temporales, solapamientos, búsquedas después de saltos, codificaciones, orden, archivos inválidos y límites de tamaño. La reproducción, PiP, el cambio de orientación, los gestos y el aspecto visual requieren pruebas en dispositivos. No se afirma equivalencia con VLC o KMPlayer en cobertura de formatos: la beta publicada usa MediaPlayer; esta rama utiliza Media3 con decodificadores de Android. Esta versión no incorpora FFmpeg, streaming, ASS/SSA ni selección de subtítulos incrustados.
 
 ## Licencia
 
