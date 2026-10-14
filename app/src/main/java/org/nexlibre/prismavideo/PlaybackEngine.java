@@ -52,6 +52,7 @@ public final class PlaybackEngine {
  public void setSurface(Surface surface){player.setVideoSurface(surface);}
  public void play(){player.play();}
  public void pause(){player.pause();}
+ public boolean ended(){return player.getPlaybackState()==Player.STATE_ENDED;}
  public boolean isPlaying(){return player.isPlaying();}
  public int position(){return (int)Math.min(Integer.MAX_VALUE,Math.max(0,player.getCurrentPosition()));}
  public int duration(){long duration=player.getDuration();return duration==C.TIME_UNSET?0:(int)Math.min(Integer.MAX_VALUE,Math.max(0,duration));}
