@@ -1,76 +1,57 @@
-# Prisma Video · 2.0.1 beta
+# Prisma Video · 5.0.1 beta
 
-Reproductor local para Android 8 o posterior. Minimalista, gratuito y abierto, sin anuncios, cuentas ni permiso de Internet.
+Reproductor local, gratuito y de código abierto para **Android 8 o posterior**. Sin anuncios, cuentas, rastreadores ni permiso de Internet.
 
-## Descargar para Android
+[**⬇ Descargar APK · Prisma Video 5.0.1 beta**](https://github.com/nexlibre/prisma-video/releases/download/v5.0.1-beta/Prisma-Video-5.0.1-beta.apk)
 
-[**⬇ Descargar APK · Prisma Video 2.0.1 beta**](https://github.com/nexlibre/prisma-video/releases/download/v2.0.1-beta/Prisma-Video-2.0.1-beta.apk)
+[Versión, novedades, SHA-256 e informe de validación](https://github.com/nexlibre/prisma-video/releases/tag/v5.0.1-beta)
 
-[Ver la versión y sus archivos](https://github.com/nexlibre/prisma-video/releases/tag/v2.0.1-beta)
+Instala el APK sobre la Beta 2.0.1 para conservar los datos. Esta línea beta mantiene su certificado de desarrollo; no es una distribución con firma privada de producción. Conserva el mismo identificador de aplicación y aumenta versionCode de 4 a 5.
 
-Descarga la APK y abre el archivo para instalarlo. Se instala sobre las versiones anteriores conservando los ajustes. También se encuentra en **Assets / Recursos** de la versión.
+## Consolidación 5.0.1
 
-## Reproducción
+- **Media3/ExoPlayer** en un núcleo separado, búsqueda exacta, selección de audio y alternativa entre decodificadores Android ante fallos de inicialización.
+- **Biblioteca:** miniaturas reales, lista/cuadrícula, búsqueda, carpetas y subcarpetas, filtros de duración/resolución/tamaño/extensión, orden por fecha/nombre/duración/tamaño, favoritos y «Continuar viendo».
+- **Listas:** datos anteriores conservados, crear/renombrar/añadir varios/quitar/eliminar; arrastre desde el asa y menú de posiciones. Aleatorio por ciclos sin repetir entradas; cola editable durante reproducción. Cambiar una lista conserva la cola ya iniciada.
+- **Subtítulos:** externos SRT/VTT, pistas incrustadas reconocidas por Media3, tres tipografías, tamaño/color/fondo/borde y posición. Puedes conservar los estilos incrustados o usar tus ajustes. Selecciona una carpeta mediante Android para detectar automáticamente archivos SRT/VTT con el mismo nombre base del vídeo.
+- **Continuidad por vídeo:** posición, velocidad, pista de audio, pista de subtítulos incrustada, archivo externo, encuadre y zoom. Una pista ausente se ignora con seguridad.
+- **Apariencia:** AMOLED Black, Light Minimal, Dynamic Color (Android 12+, paleta de respaldo en versiones anteriores) y Prisma Signature. Cinco acentos; Dynamic Color usa el acento del sistema. Funciones idénticas en todos los temas.
+- **Animaciones:** transiciones breves y controles con desvanecimiento, desactivables y respetuosos con la escala de animación de Android.
+- **Archivos:** información de duración/resolución/tamaño/formato, compartir, exclusiones y eliminación con confirmación/autorización. Renombrar mediante MediaStore en Android 10+ cuando se conceda permiso.
+- **Audio:** presets del ecualizador si la sesión/dispositivo lo admite, amplificación, solo audio, controles multimedia, pausa al desconectar auriculares o perder foco. Tras una interrupción se requiere reanudación manual.
+- **Línea de tiempo:** vista previa de fotograma durante el arrastre, con cola de trabajo y memoria acotadas. Usa fotogramas clave aproximados; algunos formatos no permiten extraerlos.
 
-- Biblioteca local con búsqueda por nombre, archivos externos y exclusión persistente de carpetas/subcarpetas.
-- Temas día y negro AMOLED, acentos menta/ámbar/azul y controles vectoriales.
-- Línea de tiempo fina; anterior, reproducir/pausar y siguiente. Sin botones grandes de salto.
-- Doble toque en los extremos para saltar entre 1 y 120 segundos, por defecto 5. El centro no provoca saltos.
-- Gestos de búsqueda horizontal, brillo a la izquierda y volumen a la derecha. Se pueden desactivar por separado.
-- Cola con todos/repetir uno/aleatorio y reproducción del siguiente archivo opcional.
-- Solo audio con controles multimedia en la notificación y reproducción en segundo plano.
-- Amplificación hasta 200 % con LoudnessEnhancer cuando el dispositivo lo admite. La ganancia máxima es aproximadamente +6 dB; el volumen del sistema también influye. En equipos incompatibles se limita a 100 %.
-- Reanudación de la posición de cada vídeo, con pausa al desconectar auriculares y gestión del foco de audio.
+## Reproducción y gestos
 
-## Opciones avanzadas
+PiP manual/automático opcional; doble toque en los extremos para saltar de 1 a 120 segundos (5 por defecto); búsqueda horizontal, brillo a la izquierda, volumen a la derecha, pellizco de 1× a 3× y bloqueo táctil. Los gestos se pueden desactivar individualmente.
 
-En el reproductor hay accesos con íconos a **Subtítulos** y **PiP**. El menú de tres puntos agrupa las demás funciones:
+Velocidad de 0,25× a 3×, ajustar/llenar/estirar, temporizador, repetición A–B y hasta 100 marcadores con nombre por vídeo. Modo Cine oculta los controles en la interfaz inmersiva. Solo audio continúa en segundo plano; la reproducción de vídeo se pausa cuando deja de estar visible. PiP visible continúa reproduciendo.
 
-- **PiP:** ventana flotante del sistema con controles multimedia. Entrada manual o automática opcional al ir a Inicio. Si Android lo bloquea, habilita Pantalla en pantalla en la información de esta app.
-- **Subtítulos SRT/VTT externos:** selecciona el archivo desde Android; se recuerda por vídeo mientras se mantenga el permiso de lectura. UTF-8, UTF-16 con BOM y Windows-1252. Hasta 5 MB y 50 000 líneas temporizadas; texto por línea limitado a 4096 caracteres. Estilo de texto plano, con etiquetas de formato eliminadas.
-- **Sincronización:** de −10 000 a +10 000 ms. Un valor positivo retrasa el texto; uno negativo lo adelanta. Tamaño de 14 a 32, tres colores y fondo opcional.
-- **Velocidad:** de 0,25× a 3×, conservando el tono cuando lo admite el motor.
-- **Pistas de audio:** selección entre las pistas que informa el dispositivo.
-- **Imagen:** ajustar sin recortar, llenar/recortar y estirar. Pellizcar para ampliar de 1× a 3×; el zoom se restablece en cada vídeo.
-- **Bloqueo:** desactiva los controles y gestos; usa el ícono de desbloqueo para recuperarlos.
-- **Temporizador:** pausa dentro de 5, 15, 30 o 60 minutos, o al terminar el vídeo. Se cancela al cerrar la reproducción; no persiste si Android termina el proceso.
-- **Marcadores:** hasta 100 momentos con nombre por archivo. También hay repetición A–B; A y B deben estar separados al menos medio segundo. El fragmento se restablece al cambiar de vídeo.
-- **Información:** duración, resolución, tipo, carpeta y velocidad.
+SRT/VTT externos: UTF-8, UTF-16 con BOM y Windows-1252; límite de 5 MB y 50 000 entradas, texto acotado y etiquetas eliminadas. Sincronización de −10 000 a +10 000 ms **solo para archivos externos**. Positivo retrasa el texto. El selector de pistas incrustadas cambia la selección sin volver a abrir el archivo.
 
-## Novedades de 2.0.1 beta
+La ganancia por encima de 100 % depende de LoudnessEnhancer; puede distorsionar. No se anuncia normalización ni limitador de picos. El ecualizador puede no estar disponible en todos los dispositivos.
 
-- Listas de reproducción locales: crear, renombrar, añadir varios vídeos, quitar y ordenar por posición. Se conservan al cerrar la app. Eliminar una lista conserva los archivos.
-- Explorador de carpetas integrado con conteos; abre una carpeta para buscar y reproducir sus vídeos.
-- Menú al mantener pulsado un vídeo o tocar sus tres puntos: reproducir, añadir a lista, favoritos, compartir, información y eliminar archivo.
-- Eliminación permanente con confirmación y autorización de Android cuando corresponda; limpia las listas, favoritos, historial y cola después del borrado. Cancelar conserva el archivo y sus referencias.
+## Validación y límites
 
-Las listas solo reproducen archivos disponibles y autorizados en la biblioteca. Las exclusiones, los permisos parciales y el filtro de duración también se respetan dentro de las listas; sus referencias se conservan si un archivo queda temporalmente oculto. El orden de una lista se cambia en el menú de cada vídeo. Una cola ya iniciada conserva su orden hasta abrir nuevamente la lista.
+[Inventario por requisito](docs/BETA-5.0.1-AUDIT.md) · [Matriz de comprobaciones](docs/VALIDATION-5.0.1.md) · [Decisión del motor](docs/PLAYBACK-ENGINE-DECISION.md) · [Registro de cambios](CHANGELOG.md)
 
-## Biblioteca y ajustes
+Actions compila, ejecuta Android Lint y pruebas Java, prueba el motor y la interfaz en emuladores API 26 y 35 y verifica la actualización desde el APK publicado 2.0.1 con el mismo certificado y conservación de datos. Solo publica tras superar estos trabajos.
 
-Los íconos de la biblioteca permiten abrir el historial de los últimos 30 vídeos, filtrar favoritos, ordenar, actualizar y abrir un archivo. Se puede ordenar por fecha de incorporación, nombre o duración, y filtrar vídeos de menos de 10, 30 o 60 segundos.
+Los ensayos sintéticos no certifican todos los perfiles, resoluciones ni equipos. HEVC, AV1, 4K y HDR dependen de decodificador y pantalla; requieren una matriz física adicional. No se promete compatibilidad universal ni equivalencia de códecs con VLC. No incluye FFmpeg, LibVLC, SMB, WebDAV, URL, bloqueo de colecciones, normalización, sincronización manual audio/vídeo ni ajuste temporal de subtítulos incrustados. ASS/SSA depende del soporte de la pista por Media3 y no garantiza todos sus efectos; no hay selector de archivos ASS externos.
 
-Los ajustes se agrupan en Apariencia, Reproducción, Gestos y controles, Subtítulos, Biblioteca y privacidad, y Acerca de. Puedes desactivar la reanudación, configurar el tiempo de ocultación y borrar historial/posiciones sin borrar vídeos, favoritos ni marcadores.
+Las listas/historial siguen usando las preferencias anteriores, con repositorio separado; Room no se introduce sin una migración probada. No se anuncian cifras de inicio, energía o memoria física que no hayan sido medidas. Las posiciones de interfaz están limitadas a unos 24,8 días por vídeo.
 
-Las exclusiones ocultan archivos de la biblioteca y nuevas colas; no los borran ni impiden abrirlos voluntariamente con el selector. No modifican una cola ya iniciada. El brillo solo afecta esta ventana. La reproducción se pausa cuando la app deja de ser visible, salvo en modo Solo audio; PiP visible sigue reproduciendo.
+## Compilar
 
-En Android 14 o posterior, la biblioteca respeta los vídeos que autorices, incluida una selección parcial. El botón Actualizar permite revisar el permiso.
-
-## Compilación y validación
-
-JDK 17, Android SDK 35 y Gradle 8.9:
+JDK 17, SDK 35 y Gradle 8.9:
 
 ```sh
 ./gradlew assembleDebug lintDebug
-mkdir -p build/subtitle-tests
-javac -d build/subtitle-tests app/src/main/java/org/nexlibre/prismavideo/SubtitleTrack.java tests/SubtitleTrackTest.java
-java -cp build/subtitle-tests SubtitleTrackTest
+./gradlew connectedDebugAndroidTest
 ```
 
-GitHub Actions compila, ejecuta Android Lint y las pruebas del lector SRT/VTT y del orden de las listas y publica automáticamente la APK beta. Los cambios exclusivamente de documentación no recompilan. La clave de desarrollo incluida mantiene compatibles las instalaciones de las betas; una distribución de producción requiere una firma privada propia.
-
-El lector de subtítulos se prueba con límites temporales, solapamientos, búsquedas después de saltos, codificaciones, orden, archivos inválidos y límites de tamaño. La reproducción, PiP, el cambio de orientación, los gestos y el aspecto visual requieren pruebas en dispositivos. No se afirma equivalencia con VLC o KMPlayer en cobertura de formatos: el motor MediaPlayer usa los códecs de Android. Esta versión no incorpora FFmpeg, streaming, ASS/SSA ni selección de subtítulos incrustados.
+Para la prueba completa de actualización consulta `scripts/verify-upgrade.py`: necesita emulador, adb, apksigner y ambos APK. El APK de pruebas contiene muestras sintéticas; estas no se distribuyen dentro de la aplicación.
 
 ## Licencia
 
-MIT. Copyright 2026 NexLibre.
+Prisma Video: MIT, Copyright 2026 NexLibre. Media3, AndroidX y Guava: Apache 2.0. Avisos y texto de licencia incluidos en Ajustes → Acerca de → Licencias y en `app/src/main/assets/`.

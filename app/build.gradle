@@ -2,10 +2,19 @@ plugins { id 'com.android.application' }
 android {
  namespace 'org.nexlibre.prismavideo'
  compileSdk 35
- defaultConfig { applicationId 'org.nexlibre.prismavideo'; minSdk 26; targetSdk 35; versionCode 4; versionName '2.0.1-beta' }
+ defaultConfig { applicationId 'org.nexlibre.prismavideo'; minSdk 26; targetSdk 35; versionCode 5; versionName '5.0.1-beta'; testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' }
  compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
 }
 android {
  signingConfigs { beta { storeFile rootProject.file('debug.keystore'); storePassword 'android'; keyAlias 'androiddebugkey'; keyPassword 'android' } }
  buildTypes { debug { signingConfig signingConfigs.beta } }
 }
+
+dependencies { implementation 'androidx.media3:media3-exoplayer:1.5.1'
+ implementation 'androidx.media3:media3-ui:1.5.1'
+ implementation 'androidx.annotation:annotation:1.9.1'
+ implementation 'androidx.annotation:annotation-experimental:1.4.1'
+ androidTestImplementation 'androidx.test:runner:1.6.2'
+ androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+ androidTestImplementation 'androidx.test:core:1.6.1'
+ androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0' }
