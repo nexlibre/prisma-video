@@ -42,13 +42,9 @@ signer=shutil.which('apksigner') or sorted(glob.glob(sdk+'/build-tools/*/apksign
 subprocess.run([signer,'verify',old],check=True)
 subprocess.run([signer,'verify',new],check=True)
 def certificate(path):
- output=subprocess.check_output([signer,'verify','--print-certs',path],text=True)
- digests=[]
- for line in output.splitlines():
-  if line.startswith('Signer') and 'certificate SHA-256 digest:' in line:
-   match=re.search(r'certificate SHA-256 digest:\s*([0-9a-fA-F:]{64,95})',line)
-   if match: digests.append(match.group(1).replace(':','').lower())
- assert digests, 'No signing certificate reported by apksigner'
+ output=subprocess.check_output([signer,'verify','--print-certs',path],text=True,stderr=subprocess.STDOUT)
+ digests=[match.group(1).replace(':','').lower() for match in re.finditer(r'certificate SHA-?256 digest\s*:\s*([0-9a-fA-F:]{64,95})',output,re.IGNORECASE)]
+ assert digests, 'No signing certificate reported by apksigner: '+repr(output)
  return tuple(sorted(set(digests)))
 assert certificate(old)==certificate(new), 'Signing certificate changed'
 adb('install','-r',old)
