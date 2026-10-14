@@ -32,6 +32,7 @@ prueba. No se usan películas ni archivos de usuarios.
 - Núcleo inicial: Actions 38502061873 aprobó build/Lint, tres pruebas Java y dos pruebas de motor por API.
 - Biblioteca/repositorios: Actions 38503123274 aprobó build y ambos trabajos de emulador.
 - El primer intento de actualización, Actions 38504249201, se detuvo por la resolución de apksigner; no se anuncia como aprobado. La ruta se corrigió en el verificador.
+- Validación de integración previa a publicación: [Actions 38510407041](https://github.com/nexlibre/prisma-video/actions/runs/38510407041), commit `a78826ca82abe701a52403ab2975ddc5bd46923c`: compilación de APK e instrumentación, Lint, pruebas Java y nueve pruebas instrumentadas correctas en cada API 26/35. Ambos trabajos verificaron actualización desde 2.0.1, certificado idéntico y conservación de datos. Se revisaron capturas de temas, reproducción y PiP.
 - La evidencia definitiva de la release será el run indicado al final de este informe por el trabajo de publicación. Consultar su commit y artefactos, no extrapolar resultados de una fase anterior.
 
 ## Límites de los ensayos
