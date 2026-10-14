@@ -79,11 +79,11 @@ public class PlaybackService extends Service {
     restoreTracks();selectEqualizerPreset(settings.getInt("equalizerPreset",-1));applyVolume();applySpeed();long resume=settings.getBoolean("resume",true)?history.getLong("position:"+item.uri,0):0;if(resume>0&&resume<duration()-2000)seek(resume);if(playRequested)play();changed();
    }
    public void ended(){if(token!=generation)return;history.edit().remove("position:"+item.uri).apply();if(sleepAtEnd){sleepAtEnd=false;pause();}else if(mode==1){seek(0);play();}else if(settings.getBoolean("autoplay",true))next();else pause();}
-   public void failed(String message){if(token!=generation)return;releasePlayer();audio.abandonAudioFocusRequest(focus);changed();if(listener!=null)listener.error(message);}
+   public void failed(String message){if(token!=generation)return;playRequested=false;releasePlayer();audio.abandonAudioFocusRequest(focus);changed();if(listener!=null)listener.error(message);}
    public void changed(){if(token==generation)PlaybackService.this.changed();}
   });
   try{player.setAudioOnly(audioOnly);player.open(item.uri,audioOnly?null:surface);changed();}
-  catch(RuntimeException e){releasePlayer();changed();if(listener!=null)listener.error("No se puede abrir el vídeo. Comprueba el acceso al archivo.");}
+  catch(RuntimeException e){playRequested=false;releasePlayer();changed();if(listener!=null)listener.error("No se puede abrir el vídeo. Comprueba el acceso al archivo.");}
  }
  public int videoWidth(){return player==null?0:player.videoWidth();}
  public int videoHeight(){return player==null?0:player.videoHeight();}
@@ -96,7 +96,7 @@ public class PlaybackService extends Service {
  private void restoreTracks(){List<PlaybackEngine.AudioTrack> tracks=player.audioTracks();int audioIndex=history.getInt("audioTrack:"+current().uri,-1);if(audioIndex>=0&&audioIndex<tracks.size())player.selectAudioTrack(tracks.get(audioIndex));tracks=player.subtitleTracks();int textIndex=history.getInt("textTrack:"+current().uri,-1);if(textIndex>=0&&textIndex<tracks.size())player.selectSubtitleTrack(tracks.get(textIndex));}
 
 
- public void play(){playRequested=true;if(!prepared)return;if(audio.requestAudioFocus(focus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED){playRequested=false;return;}player.play();changed();}
+ public void play(){playRequested=true;if(!prepared){if(player==null&&current()!=null)open();return;}if(audio.requestAudioFocus(focus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED){playRequested=false;return;}player.play();changed();}
  public void pause(){playRequested=false;if(player!=null)player.pause();savePosition();changed();}
  public void toggle(){if(playRequested)pause();else play();}
  public void seek(long ms){if(prepared)player.seek(Math.max(0,Math.min(ms,duration())));}

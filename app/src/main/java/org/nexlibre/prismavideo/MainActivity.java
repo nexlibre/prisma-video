@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements PlaybackService.Listener {
  private PictureInPictureParams pipParams;
  private final Runnable hideFeedback=()->{if(feedback!=null)feedback.setVisibility(View.GONE);};
  private final Runnable hideControls=()->{if(playerPage&&playback!=null&&playback.playing()&&controls!=null)setControlsVisible(false);};
- private final Runnable tick=new Runnable(){public void run(){if(playerPage&&playback!=null&&!stopped){if(!dragging){timeline.setMax(Math.max(1,playback.duration()));timeline.setProgress(playback.position());}String elapsed=clock(playback.position()),duration=clock(playback.duration());if(!elapsed.contentEquals(time.getText()))time.setText(elapsed);if(!duration.contentEquals(totalTime.getText()))totalTime.setText(duration);updateSubtitle();}handler.postDelayed(this,200);}};
+ private final Runnable tick=new Runnable(){public void run(){if(playerPage&&playback!=null&&!stopped){if(!dragging){timeline.setMax(Math.max(1,playback.duration()));timeline.setProgress(playback.position());}String elapsed=clock(playback.position()),duration=clock(playback.duration());if(!dragging&&!elapsed.contentEquals(time.getText()))time.setText(elapsed);if(!duration.contentEquals(totalTime.getText()))totalTime.setText(duration);updateSubtitle();}handler.postDelayed(this,200);}};
  private final ServiceConnection connection=new ServiceConnection(){
   public void onServiceConnected(ComponentName n,IBinder binder){playback=((PlaybackService.LocalBinder)binder).get();playback.listener=MainActivity.this;bound=true;
    if(pendingUri!=null){openExternal(pendingUri);pendingUri=null;}else if(playback.current()!=null)showPlayer();
