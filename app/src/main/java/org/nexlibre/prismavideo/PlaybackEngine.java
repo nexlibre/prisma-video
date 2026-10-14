@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Main-thread-only playback core. Persistence, focus and queue belong to the service. */
+@androidx.annotation.OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 public final class PlaybackEngine {
  public interface Events { void ready(); void ended(); void failed(String message); void changed(); }
  public static final class AudioTrack {

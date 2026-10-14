@@ -26,6 +26,7 @@ public class PlaybackService extends Service {
   private final ShuffleOrder shuffle=new ShuffleOrder(new Random());
  private Surface surface;
  private int generation=0;
+ private boolean playRequested=false;
  public float speed=1f;
  public long loopA=-1,loopB=-1,sleepDeadline=0;
  public boolean sleepAtEnd=false;
@@ -69,12 +70,12 @@ public class PlaybackService extends Service {
  public void setAudioOnly(boolean value){audioOnly=value;setSurface(surface);changed();}
  private void releasePlayer(){savePosition();prepared=false;generation++;if(enhancer!=null){enhancer.release();enhancer=null;}if(player!=null){player.release();player=null;}}
  private void open(){
-  releasePlayer();VideoItem item=current();loadedItem=item;loopA=loopB=-1;if(item==null)return;recordHistory(item);
+  releasePlayer();playRequested=true;VideoItem item=current();loadedItem=item;loopA=loopB=-1;if(item==null)return;recordHistory(item);
   final int token=generation;
   player=new PlaybackEngine(this,new PlaybackEngine.Events(){
    public void ready(){if(token!=generation)return;prepared=true;
     try{enhancer=new LoudnessEnhancer(player.audioSessionId());boostAvailable=true;}catch(RuntimeException e){boostAvailable=false;volume=Math.min(volume,100);}
-    applyVolume();applySpeed();long resume=settings.getBoolean("resume",true)?history.getLong("position:"+item.uri,0):0;if(resume>0&&resume<duration()-2000)seek(resume);play();changed();
+    applyVolume();applySpeed();long resume=settings.getBoolean("resume",true)?history.getLong("position:"+item.uri,0):0;if(resume>0&&resume<duration()-2000)seek(resume);if(playRequested)play();changed();
    }
    public void ended(){if(token!=generation)return;history.edit().remove("position:"+item.uri).apply();if(sleepAtEnd){sleepAtEnd=false;pause();}else if(mode==1){seek(0);play();}else if(settings.getBoolean("autoplay",true))next();else pause();}
    public void failed(String message){if(token!=generation)return;releasePlayer();audio.abandonAudioFocusRequest(focus);changed();if(listener!=null)listener.error(message);}
@@ -88,9 +89,9 @@ public class PlaybackService extends Service {
  public List<PlaybackEngine.AudioTrack> audioTracks(){return player==null?Collections.emptyList():player.audioTracks();}
  public void selectAudioTrack(PlaybackEngine.AudioTrack track){if(player!=null)player.selectAudioTrack(track);}
 
- public void play(){if(!prepared)return;if(audio.requestAudioFocus(focus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED)return;player.play();changed();}
- public void pause(){if(player!=null)player.pause();savePosition();changed();}
- public void toggle(){if(playing())pause();else play();}
+ public void play(){playRequested=true;if(!prepared)return;if(audio.requestAudioFocus(focus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED){playRequested=false;return;}player.play();changed();}
+ public void pause(){playRequested=false;if(player!=null)player.pause();savePosition();changed();}
+ public void toggle(){if(playRequested)pause();else play();}
  public void seek(long ms){if(prepared)player.seek(Math.max(0,Math.min(ms,duration())));}
  public void next(){if(queue.isEmpty())return;index=mode==2&&queue.size()>1?shuffle.next(queue.size(),index):(index+1)%queue.size();open();}
  public void previous(){if(queue.isEmpty())return;index=(index+queue.size()-1)%queue.size();open();}
@@ -106,7 +107,7 @@ public class PlaybackService extends Service {
  public void markA(){loopA=position();loopB=-1;changed();}
  public boolean markB(){long position=position();if(loopA<0||position-loopA<500)return false;loopB=position;changed();return true;}
  public void clearLoop(){loopA=loopB=-1;changed();}
- public void savePosition(){if(loadedItem==null||!prepared)return;int position=position();if(position>=duration()-2000)position=0;history.edit().putLong("position:"+loadedItem.uri,position).apply();}
+ public void savePosition(){if(loadedItem==null||!prepared)return;int position=position();if(duration()>0&&position>=duration()-2000)position=0;history.edit().putLong("position:"+loadedItem.uri,position).apply();}
  private void recordHistory(VideoItem item){try{JSONArray old=new JSONArray(history.getString("items","[]")),next=new JSONArray();JSONObject row=new JSONObject();row.put("uri",item.uri.toString());row.put("title",item.title);row.put("folder",item.folder);row.put("duration",item.duration);next.put(row);for(int i=0;i<old.length()&&next.length()<30;i++){JSONObject v=old.getJSONObject(i);if(!v.getString("uri").equals(item.uri.toString()))next.put(v);}history.edit().putString("items",next.toString()).apply();}catch(JSONException e){history.edit().putString("items","[]").apply();}}
  public List<VideoItem> recent(){List<VideoItem> result=new ArrayList<>();try{JSONArray items=new JSONArray(history.getString("items","[]"));for(int i=0;i<items.length();i++){JSONObject v=items.getJSONObject(i);result.add(new VideoItem(android.net.Uri.parse(v.getString("uri")),v.getString("title"),v.optString("folder"),v.optLong("duration")));}}catch(JSONException e){}return result;}
  public void forgetVideo(android.net.Uri uri){VideoItem active=current();if(active!=null&&active.uri.equals(uri))stopPlayback();else{queue.removeIf(v->v.uri.equals(uri));shuffle.reset();if(active!=null)index=queue.indexOf(active);}try{JSONArray old=new JSONArray(history.getString("items","[]")),next=new JSONArray();for(int i=0;i<old.length();i++)if(!uri.toString().equals(old.getJSONObject(i).getString("uri")))next.put(old.getJSONObject(i));history.edit().putString("items",next.toString()).remove("position:"+uri).apply();}catch(JSONException e){history.edit().remove("position:"+uri).apply();}}
@@ -122,6 +123,6 @@ public class PlaybackService extends Service {
    .addAction(new Notification.Action.Builder(null,playing()?"Pausar":"Reproducir",command("toggle",1)).build()).addAction(new Notification.Action.Builder(null,"Siguiente",command("next",2)).build()).addAction(new Notification.Action.Builder(null,"Cerrar",command("stop",3)).build()).setStyle(new Notification.MediaStyle().setMediaSession(session.getSessionToken()).setShowActionsInCompactView(0,1,2)).build();
   startForeground(9,n);
  }
- public void stopPlayback(){setSleep(0,false);releasePlayer();queue.clear();audio.abandonAudioFocusRequest(focus);stopForeground(STOP_FOREGROUND_REMOVE);if(listener!=null)listener.changed();}
+ public void stopPlayback(){playRequested=false;setSleep(0,false);releasePlayer();queue.clear();audio.abandonAudioFocusRequest(focus);stopForeground(STOP_FOREGROUND_REMOVE);if(listener!=null)listener.changed();}
  @Override public void onDestroy(){clock.removeCallbacksAndMessages(null);releasePlayer();audio.abandonAudioFocusRequest(focus);unregisterReceiver(noisy);session.release();super.onDestroy();}
 }

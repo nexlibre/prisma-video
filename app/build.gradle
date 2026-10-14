@@ -10,4 +10,6 @@ android {
  buildTypes { debug { signingConfig signingConfigs.beta } }
 }
 
-dependencies { implementation 'androidx.media3:media3-exoplayer:1.5.1' }
+dependencies { implementation 'androidx.media3:media3-exoplayer:1.5.1'
+ implementation 'androidx.annotation:annotation:1.9.1'
+ implementation 'androidx.annotation:annotation-experimental:1.4.1' }
