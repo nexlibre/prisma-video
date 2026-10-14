@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Install the released beta, seed real legacy prefs, upgrade, and compare values."""
+import glob
+import shutil
 import json
 import os
 import subprocess
@@ -34,10 +36,12 @@ def decode(data):
   result[child.get('name')]=value
  return result
 old,new=sys.argv[1:3]
-subprocess.run(['apksigner','verify',old],check=True)
-subprocess.run(['apksigner','verify',new],check=True)
+sdk=os.environ.get('ANDROID_HOME') or os.environ.get('ANDROID_SDK_ROOT') or '/usr/local/lib/android/sdk'
+signer=shutil.which('apksigner') or sorted(glob.glob(sdk+'/build-tools/*/apksigner'))[-1]
+subprocess.run([signer,'verify',old],check=True)
+subprocess.run([signer,'verify',new],check=True)
 def certificate(path):
- output=subprocess.check_output(['apksigner','verify','--print-certs',path],text=True)
+ output=subprocess.check_output([signer,'verify','--print-certs',path],text=True)
  return next(line.split(': ',1)[1] for line in output.splitlines() if line.startswith('Signer #1 certificate SHA-256 digest:'))
 assert certificate(old)==certificate(new), 'Signing certificate changed'
 adb('install','-r',old)

@@ -52,4 +52,16 @@ public class PlaybackEngineTest {
    assertTrue("No playback error reported",failed.await(20,TimeUnit.SECONDS));assertNotNull(error.get());
   }finally{main(()->{if(engine.get()!=null)engine.get().release();});}
  }
+ private void containerLoads(String format) throws Exception {
+  Context context=InstrumentationRegistry.getInstrumentation().getTargetContext();File file=new File(context.getCacheDir(),"container-smoke."+format);
+  try(InputStream input=InstrumentationRegistry.getInstrumentation().getContext().getAssets().open("smoke."+format+".b64");ByteArrayOutputStream bytes=new ByteArrayOutputStream()){byte[] buffer=new byte[4096];int count;while((count=input.read(buffer))!=-1)bytes.write(buffer,0,count);try(FileOutputStream output=new FileOutputStream(file)){output.write(Base64.decode(bytes.toByteArray(),Base64.DEFAULT));}}
+  CountDownLatch ready=new CountDownLatch(1),ended=new CountDownLatch(1);AtomicReference<String> error=new AtomicReference<>();AtomicReference<PlaybackEngine> engine=new AtomicReference<>();
+  try{main(()->{engine.set(new PlaybackEngine(context,new PlaybackEngine.Events(){public void ready(){ready.countDown();}public void ended(){ended.countDown();}public void changed(){}public void failed(String message){error.set(message);ready.countDown();ended.countDown();}}));engine.get().open(Uri.fromFile(file),null);});assertTrue(format+" prepare timeout",ready.await(20,TimeUnit.SECONDS));assertNull(format,error.get());main(()->{assertTrue(engine.get().duration()>=1800);engine.get().play();});assertTrue(format+" completion timeout",ended.await(20,TimeUnit.SECONDS));assertNull(format,error.get());}finally{main(()->{if(engine.get()!=null)engine.get().release();});file.delete();}
+ }
+ @Test public void matroskaAndQuickTimeContainersPlay() throws Exception {containerLoads("mkv");containerLoads("mov");}
+ @Test public void webmVp9OpusPlaysWhenDecoderAvailable() throws Exception {
+  boolean supported=false;for(android.media.MediaCodecInfo codec:new android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS).getCodecInfos())if(!codec.isEncoder())for(String type:codec.getSupportedTypes())if(type.equals("video/x-vnd.on2.vp9"))supported=true;
+  org.junit.Assume.assumeTrue("VP9 decoder unavailable",supported);containerLoads("webm");
+ }
+
 }

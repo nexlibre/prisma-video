@@ -1,0 +1,17 @@
+Prisma Video: MIT, Copyright 2026 NexLibre.
+
+AndroidX Media3 (ExoPlayer, UI, Common, extractors, data source and decoder)
+Copyright The Android Open Source Project. Apache License 2.0.
+https://github.com/androidx/media
+
+AndroidX annotations and experimental annotations
+Copyright The Android Open Source Project. Apache License 2.0.
+https://cs.android.com/androidx/platform/frameworks/support
+
+Google Guava / ListenableFuture
+Copyright Google Inc. Apache License 2.0.
+https://github.com/google/guava
+
+The Apache License 2.0 is included as APACHE-2.0.txt.
+AndroidX test libraries are used only in test APKs, not the application APK.
+No FFmpeg or LibVLC native libraries are linked into this beta.
