@@ -1,7 +1,7 @@
 name: Prisma Video validation and beta
 on:
   push:
-    branches: [main, beta/5.0.1-consolidation]
+    branches: [main]
     paths-ignore: [README.md, RELEASE.md, LICENSE]
   pull_request:
   workflow_dispatch:
@@ -32,6 +32,8 @@ jobs:
           javac -d build/subtitle-tests app/src/main/java/org/nexlibre/prismavideo/ShuffleOrder.java tests/ShuffleOrderTest.java
           java -cp build/subtitle-tests ShuffleOrderTest
           ./gradlew assembleDebug lintDebug --no-daemon
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump permissions app/build/outputs/apk/debug/app-debug.apk > app/build/reports/apk-permissions.txt
+          if grep -E 'android.permission.(INTERNET|ACCESS_NETWORK_STATE)' app/build/reports/apk-permissions.txt; then exit 1; fi
           cp app/build/outputs/apk/debug/app-debug.apk Prisma-Video-5.0.1-beta.apk
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -100,8 +102,12 @@ jobs:
           grep -q "versionName '5.0.1-beta'" app/build.gradle
           sha256sum Prisma-Video-5.0.1-beta.apk > SHA256SUMS
           printf "\n## Ejecución de publicación validada\n\nCommit: %s\n\nEvidencia: https://github.com/%s/actions/runs/%s\n" "$GITHUB_SHA" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> docs/VALIDATION-5.0.1.md
-          if gh release view v5.0.1-beta --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo 'La versión ya existe; no se sobrescriben sus archivos.'
-            exit 1
+          if gh release view v5.0.1-beta --repo "$GITHUB_REPOSITORY" --json isDraft > /tmp/prisma-release.json 2>/dev/null; then
+            python3 -c 'import json; assert json.load(open("/tmp/prisma-release.json"))["isDraft"], "La release ya está publicada; no se sobrescribe"'
+          else
+            gh release create v5.0.1-beta --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'Prisma Video 5.0.1 beta' --draft --prerelease --notes-file RELEASE.md
           fi
-          gh release create v5.0.1-beta Prisma-Video-5.0.1-beta.apk SHA256SUMS docs/VALIDATION-5.0.1.md --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'Prisma Video 5.0.1 beta' --prerelease --notes-file RELEASE.md
+          gh release upload v5.0.1-beta Prisma-Video-5.0.1-beta.apk SHA256SUMS docs/VALIDATION-5.0.1.md --repo "$GITHUB_REPOSITORY" --clobber
+          gh release view v5.0.1-beta --repo "$GITHUB_REPOSITORY" --json assets > /tmp/prisma-assets.json
+          python3 -c 'import json; names={a["name"] for a in json.load(open("/tmp/prisma-assets.json"))["assets"]}; assert {"Prisma-Video-5.0.1-beta.apk","SHA256SUMS","VALIDATION-5.0.1.md"}.issubset(names)'
+          gh release edit v5.0.1-beta --repo "$GITHUB_REPOSITORY" --draft=false

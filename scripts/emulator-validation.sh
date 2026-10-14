@@ -3,6 +3,7 @@ set -euo pipefail
 collect() {
   mkdir -p app/build/reports/screenshots
   adb pull /sdcard/Download/PrismaTestScreenshots app/build/reports/screenshots || true
+  adb logcat -d -s PRISMA_QA:I '*:S'
   adb logcat -d > app/build/reports/screenshots/logcat.txt || true
 }
 trap collect EXIT
